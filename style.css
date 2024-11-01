@@ -11,3 +11,12 @@ body {
     background-size: cover;
     
 }
+
+#chart {
+    height: 50vh;
+    width: 100vh;
+}
+
+#map {
+    height: 90vh;
+}
