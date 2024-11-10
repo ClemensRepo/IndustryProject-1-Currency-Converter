@@ -12,6 +12,10 @@ body {
     
 }
 
+.background-image {
+    background-color: rgba(0,0,0,0.8);
+}
+
 #chart {
     height: 50vh;
     width: 100vh;
