@@ -1,15 +1,41 @@
 let singaporeMap;
 function main() {
-  let currencyChoice = [];
   window.addEventListener("DOMContentLoaded", async () => {
-    init();
+  init();
+
+    // Script for conversion from base currency to target currency
+    let amount = parseInt(document.querySelector("#amount").value);
+    let result = parseInt(document.querySelector("#result").value);
+    let baseCurrency = parseInt(document.querySelector("#base-currency").value);
+    let targetCurrency = parseInt(document.querySelector("#target-currency").value);
+
+    console.log(baseCurrency, targetCurrency, amount, result);
+    
+
+    document.querySelector("#convert").addEventListener("click", async () => {
+      let currencyConversion = await axios.request({
+        method: GET,
+        url: `https://data.fixer.io/api/convert
+        ? access_key = API_KEY
+        & from = ${baseCurrency}
+        & to = ${targetCurrency}
+        & amount = ${amount}`,
+      });
+
+      console.log(currencyConversion.data);
+
+      document.querySelector("#result").value = currencyConversion.data.result;
+    });
+
+    let historicRates = await axios.request({
+      method: GET,
+      url: `https://data.fixer.io/api/2019-12-02
+      ? access_key = API_KEY
+      & base = ${baseCurrency}
+      & symbols = ${targetCurrency}`,
+    });
 
     //ChartJS script for rendering values onto Canvas(Chart) in HTML
-    // let resLastestRates = await axios.request({
-    //   "method": GET,
-    //   "url": "https://data.fixer.io/api/latest
-    //   ? access_key=8dc5ac75300cf53baa74a08db6d4ca15"
-    // });
 
     const ctx = document.getElementById("chart");
 

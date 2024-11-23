@@ -17,7 +17,7 @@
 
 <body>
 
-    <div class="container-fluid">
+    <div class="container-fluid background-image">
         <div class="text-center bg-secondary">
             <h1 class="text-white ">World Currency Exchange</h1>
         </div>
@@ -26,10 +26,10 @@
             <div class="form-group">
                 <label class="text-dark mt-3">You have</label>
                 <div class="input-group">
-                    <input type="number" class="form-control border-none mt-2" placeholder="Enter amount" required />
+                    <input type="number" class="form-control border-none mt-2" placeholder="Enter amount" id="amount" required autofocus/>
                     <span>
 
-                        <select class="form-control mt-2">
+                        <select class="form-control mt-2" id="base-currency">
                             <option value="USD"><span><img src="" alt=""></span>US Dollar</option>
                             <option value="EUR"><img src="images\flags\icons8-euro-48.png" alt="euro">Euro</option>
                             <option value="SGD">Singapore Dollar</option>
@@ -48,10 +48,10 @@
             <div class="form-group mt-4">
                 <label class="text-dark">You get</label>
                 <div class="input-group">
-                    <input type="number" class="form-control mt-2" placeholder="Enter amount" required />
+                    <input type="number" class="form-control mt-2" placeholder="Amount converted" id="result" />
 
                     <span>
-                        <select class="form-control mt-2">
+                        <select class="form-control mt-2" id="target-currency">
                             <option value="USD">US Dollar</option>
                             <option value="EUR">Euro</option>
                             <option value="SGD">Singapore Dollar</option>
