@@ -1,20 +1,19 @@
-let singaporeMap;
 function main() {
+  let singaporeMap;
   window.addEventListener("DOMContentLoaded", async () => {
-  init();
+    init();
 
     // Script for conversion from base currency to target currency
     let amount = parseInt(document.querySelector("#amount").value);
-    let result = parseInt(document.querySelector("#result").value);
-    let baseCurrency = parseInt(document.querySelector("#base-currency").value);
-    let targetCurrency = parseInt(document.querySelector("#target-currency").value);
+    let result = document.querySelector("#result").value;
+    let baseCurrency = document.querySelector("#base-currency").value;
+    let targetCurrency = document.querySelector("#target-currency").value;
 
     console.log(baseCurrency, targetCurrency, amount, result);
-    
 
     document.querySelector("#convert").addEventListener("click", async () => {
       let currencyConversion = await axios.request({
-        method: GET,
+        method: "GET",
         url: `https://data.fixer.io/api/convert
         ? access_key = API_KEY
         & from = ${baseCurrency}
@@ -24,41 +23,46 @@ function main() {
 
       console.log(currencyConversion.data);
 
-      document.querySelector("#result").value = currencyConversion.data.result;
+      document.querySelector("result").value = currencyConversion.data.result;
     });
 
     let historicRates = await axios.request({
-      method: GET,
-      url: `https://data.fixer.io/api/2019-12-02
-      ? access_key = API_KEY
-      & base = ${baseCurrency}
-      & symbols = ${targetCurrency}`,
+      method: "GET",
+      url: "https://data.fixer.io/api/timeseries?access_key={PASTE_YOUR_API_KEY_HERE}",
+      params: {
+        symbols: `${baseCurrency},${targetCurrency}`,
+        start_date: "2012-05-01",
+        end_date: "2012-05-25",
+      },
     });
+
+    console.log(historicRates.data);
 
     //ChartJS script for rendering values onto Canvas(Chart) in HTML
 
     const ctx = document.getElementById("chart");
+    const labels = Object.keys(historicRates.data.rates);
+    const data = Object.values(historicRates.data.rates).map(
+      (rate) => rate[targetCurrency]
+    );
 
     new Chart(ctx, {
       type: "line",
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: labels,
         datasets: [
           {
-            label: "Exchange rates",
-            data: [12, 19, 3, 5, 2, 3],
+            label: `Exchange rates (${baseCurrency} to ${targetCurrency})`,
+            data: data,
             borderWidth: 1,
           },
         ],
       },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
     });
+
+    // Add table with "live" exchange rates of selected currencies
+
+    
 
     // Add marker cluster layer to the map denoting where the money changers are
 
@@ -76,7 +80,7 @@ function main() {
         let nameOfShop = allTDs[0].innerHTML;
         let postalCodeOfShop = allTDs[1].innerHTML;
         let addressOfShop = allTDs[2].innerHTML;
-        marker.bindPopup(`<h1>${nameOfShop}</h1>
+        layer.bindPopup(`<h1>${nameOfShop}</h1>
             <ul>
               <li>Postal Code ${postalCodeOfShop}</li>
               <li>Address ${addressOfShop}</li>
