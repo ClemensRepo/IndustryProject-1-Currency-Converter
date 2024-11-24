@@ -5,20 +5,17 @@ function main() {
 
     // Script for conversion from base currency to target currency
     let amount = parseInt(document.querySelector("#amount").value);
-    let result = document.querySelector("#result").value;
+    
     let baseCurrency = document.querySelector("#base-currency").value;
     let targetCurrency = document.querySelector("#target-currency").value;
-
-    console.log(baseCurrency, targetCurrency, amount, result);
+    console.log("Hello");
+    console.log(baseCurrency, targetCurrency, amount);
 
     document.querySelector("#convert").addEventListener("click", async () => {
       let currencyConversion = await axios.request({
         method: "GET",
-        url: `https://data.fixer.io/api/convert
-        ? access_key = API_KEY
-        & from = ${baseCurrency}
-        & to = ${targetCurrency}
-        & amount = ${amount}`,
+        url: `https://https://data.fixer.io/api/convert?access_key=6d99ea10b206264b8fa64bddfab32a00
+        &from=${baseCurrency}&to=${targetCurrency}&amount=${amount}`,
       });
 
       console.log(currencyConversion.data);
@@ -28,7 +25,7 @@ function main() {
 
     let historicRates = await axios.request({
       method: "GET",
-      url: "https://data.fixer.io/api/timeseries?access_key={PASTE_YOUR_API_KEY_HERE}",
+      url: "https://data.fixer.io/api/timeseries?access_key=6d99ea10b206264b8fa64bddfab32a00",
       params: {
         symbols: `${baseCurrency},${targetCurrency}`,
         start_date: "2012-05-01",
@@ -61,8 +58,32 @@ function main() {
     });
 
     // Add table with "live" exchange rates of selected currencies
+    let resLiveRates = await axios.request({
+      method: "GET",
+      url: `http://data.fixer.io/api/latest
+    ? access_key = 6d99ea10b206264b8fa64bddfab32a00
+    & base = ${baseCurrency}
+    & symbols = GBP,JPY,EUR`,
+      
+    })
 
-    
+    let tableBody = document.querySelector("table-body");
+    tableBody.innerHTML = "";
+
+    for (const [currency, rate] of Object.entries(rates)) {
+      let row = document.createElement("tr");
+      
+      let currencyCell = document.createElement("th");
+      currencyCell.textContent = currency;
+
+      let rateCell = document.createElement("td");
+      rateCell.textContent = rate;
+
+      row.appendChild(currencyCell);
+      row.appendChild(ratecell);
+
+      tableBody.appendChild(row);
+    }
 
     // Add marker cluster layer to the map denoting where the money changers are
 
