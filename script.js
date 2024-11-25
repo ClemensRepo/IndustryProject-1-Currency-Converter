@@ -4,75 +4,62 @@ function main() {
     init();
 
     // Script for conversion from base currency to target currency
-    let amount = parseInt(document.querySelector("#amount").value);
-    
-    let baseCurrency = document.querySelector("#base-currency").value;
-    let targetCurrency = document.querySelector("#target-currency").value;
-    console.log("Hello");
-    console.log(baseCurrency, targetCurrency, amount);
 
     document.querySelector("#convert").addEventListener("click", async () => {
-      let currencyConversion = await axios.request({
-        method: "GET",
-        url: `https://https://data.fixer.io/api/convert?access_key=6d99ea10b206264b8fa64bddfab32a00
-        &from=${baseCurrency}&to=${targetCurrency}&amount=${amount}`,
-      });
+      let amount = parseInt(document.querySelector("#amount").value);
 
-      console.log(currencyConversion.data);
+      let baseCurrency = document.querySelector("#base-currency").value;
+      let targetCurrency = document.querySelector("#target-currency").value;
+      console.log(baseCurrency, targetCurrency, amount);
 
-      document.querySelector("result").value = currencyConversion.data.result;
+      let currencyConversion = await axios.get(
+        `https://v6.exchangerate-api.com/v6/634528519611d2105366c5aa/pair/${baseCurrency}/${targetCurrency}`
+      );
+
+      console.log(currencyConversion.data.conversion_rate);
+      console.log(amount * (currencyConversion.data.conversion_rate));
+
+      document.querySelector("#result").value = amount * currencyConversion.data.conversion_rate;
     });
-
-    let historicRates = await axios.request({
-      method: "GET",
-      url: "https://data.fixer.io/api/timeseries?access_key=6d99ea10b206264b8fa64bddfab32a00",
-      params: {
-        symbols: `${baseCurrency},${targetCurrency}`,
-        start_date: "2012-05-01",
-        end_date: "2012-05-25",
-      },
-    });
-
-    console.log(historicRates.data);
 
     //ChartJS script for rendering values onto Canvas(Chart) in HTML
+    // let historicRates = await axios.get("");
 
-    const ctx = document.getElementById("chart");
-    const labels = Object.keys(historicRates.data.rates);
-    const data = Object.values(historicRates.data.rates).map(
-      (rate) => rate[targetCurrency]
-    );
+    // console.log(historicRates.data);
 
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: `Exchange rates (${baseCurrency} to ${targetCurrency})`,
-            data: data,
-            borderWidth: 1,
-          },
-        ],
-      },
-    });
+    // const ctx = document.getElementById("chart");
+    // const labels = Object.keys(historicRates.data.rates);
+    // const data = Object.values(historicRates.data.rates).map(
+    //   (rate) => rate[targetCurrency]
+    // );
+
+    // new Chart(ctx, {
+    //   type: "line",
+    //   data: {
+    //     labels: labels,
+    //     datasets: [
+    //       {
+    //         label: `Exchange rates (${baseCurrency} to ${targetCurrency})`,
+    //         data: data,
+    //         borderWidth: 1,
+    //       },
+    //     ],
+    //   },
+    // });
 
     // Add table with "live" exchange rates of selected currencies
-    let resLiveRates = await axios.request({
-      method: "GET",
-      url: `http://data.fixer.io/api/latest
-    ? access_key = 6d99ea10b206264b8fa64bddfab32a00
-    & base = ${baseCurrency}
-    & symbols = GBP,JPY,EUR`,
-      
-    })
+    let resLiveRates = await axios.get(
+      "https://v6.exchangerate-api.com/v6/634528519611d2105366c5aa/latest/USD"
+    );
 
+    console.log(resLiveRates.data.conversion_rates);
     let tableBody = document.querySelector("table-body");
     tableBody.innerHTML = "";
 
-    for (const [currency, rate] of Object.entries(rates)) {
+    for (const [currency, rate] of Object.entries(resLiveRates.data.conversion_rates)) {
+      console.log(currency, rate);
       let row = document.createElement("tr");
-      
+
       let currencyCell = document.createElement("th");
       currencyCell.textContent = currency;
 
@@ -80,7 +67,7 @@ function main() {
       rateCell.textContent = rate;
 
       row.appendChild(currencyCell);
-      row.appendChild(ratecell);
+      row.appendChild(rateCell);
 
       tableBody.appendChild(row);
     }
@@ -88,8 +75,9 @@ function main() {
     // Add marker cluster layer to the map denoting where the money changers are
 
     let resMoneyChangerLocat = await axios.get(
-      "data/LocationsofMoneyChangerGEOJSON.geojson"
+      "./data/LocationsofMoneyChangerGEOJSON.geojson"
     );
+    console.log("hello");
     console.log(resMoneyChangerLocat.data);
     let features = resMoneyChangerLocat.data;
 
