@@ -3,13 +3,13 @@ function main() {
   window.addEventListener("DOMContentLoaded", async () => {
     init();
 
+    let amount = parseInt(document.querySelector("#amount").value);
+
+    let baseCurrency = document.querySelector("#base-currency").value;
+    let targetCurrency = document.querySelector("#target-currency").value;
     // Script for conversion from base currency to target currency
 
     document.querySelector("#convert").addEventListener("click", async () => {
-      let amount = parseInt(document.querySelector("#amount").value);
-
-      let baseCurrency = document.querySelector("#base-currency").value;
-      let targetCurrency = document.querySelector("#target-currency").value;
       console.log(baseCurrency, targetCurrency, amount);
 
       let currencyConversion = await axios.get(
@@ -17,9 +17,10 @@ function main() {
       );
 
       console.log(currencyConversion.data.conversion_rate);
-      console.log(amount * (currencyConversion.data.conversion_rate));
+      console.log(amount * currencyConversion.data.conversion_rate);
 
-      document.querySelector("#result").value = amount * currencyConversion.data.conversion_rate;
+      document.querySelector("#result").value =
+        amount * currencyConversion.data.conversion_rate;
     });
 
     //ChartJS script for rendering values onto Canvas(Chart) in HTML
@@ -49,27 +50,41 @@ function main() {
 
     // Add table with "live" exchange rates of selected currencies
     let resLiveRates = await axios.get(
-      "https://v6.exchangerate-api.com/v6/634528519611d2105366c5aa/latest/USD"
+      `https://v6.exchangerate-api.com/v6/634528519611d2105366c5aa/latest/${baseCurrency}`
     );
 
     console.log(resLiveRates.data.conversion_rates);
-    let tableBody = document.querySelector("table-body");
+    let tableBody = document.querySelector("#table-body");
     tableBody.innerHTML = "";
 
-    for (const [currency, rate] of Object.entries(resLiveRates.data.conversion_rates)) {
-      console.log(currency, rate);
-      let row = document.createElement("tr");
+    let row1 = document.createElement("tr");
+    let row2 = document.createElement("tr");
 
-      let currencyCell = document.createElement("th");
-      currencyCell.textContent = currency;
+    for (const [currency, rate] of Object.entries(
+      resLiveRates.data.conversion_rates
+    )) {
+      if (
+        currency === "USD" ||
+        currency === "SGD" ||
+        currency === "MYR" ||
+        currency === "IDR" ||
+        currency === "AUD" ||
+        currency === "HKD" ||
+        currency === "THB" ||
+        currency === "JPY"
+      ) {
+        let currencyCell = document.createElement("th");
+        currencyCell.textContent = currency;
 
-      let rateCell = document.createElement("td");
-      rateCell.textContent = rate;
+        let rateCell = document.createElement("td");
+        rateCell.textContent = rate;
 
-      row.appendChild(currencyCell);
-      row.appendChild(rateCell);
+        row1.appendChild(currencyCell);
+        row2.appendChild(rateCell);
 
-      tableBody.appendChild(row);
+        tableBody.appendChild(row1);
+        tableBody.appendChild(row2);
+      }
     }
 
     // Add marker cluster layer to the map denoting where the money changers are
