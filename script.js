@@ -3,13 +3,14 @@ function main() {
   window.addEventListener("DOMContentLoaded", async () => {
     init();
 
-    let amount = parseInt(document.querySelector("#amount").value);
-
-    let baseCurrency = document.querySelector("#base-currency").value;
-    let targetCurrency = document.querySelector("#target-currency").value;
     // Script for conversion from base currency to target currency
 
     document.querySelector("#convert").addEventListener("click", async () => {
+      let amount = parseInt(document.querySelector("#amount").value);
+
+      let baseCurrency = document.querySelector("#base-currency").value;
+      let targetCurrency = document.querySelector("#target-currency").value;
+
       console.log(baseCurrency, targetCurrency, amount);
 
       let currencyConversion = await axios.get(
@@ -21,6 +22,48 @@ function main() {
 
       document.querySelector("#result").value =
         amount * currencyConversion.data.conversion_rate;
+
+        // Add table with "live" exchange rates of selected currencies
+    let resLiveRates = await axios.get(
+      `https://v6.exchangerate-api.com/v6/634528519611d2105366c5aa/latest/${baseCurrency}`
+    );
+
+    console.log(resLiveRates.data.conversion_rates);
+    let tableBody = document.querySelector("#table-body");
+    tableBody.innerHTML = "";
+
+    let row1 = document.createElement("tr");
+    let row2 = document.createElement("tr");
+
+    for (const [currency, rate] of Object.entries(
+      resLiveRates.data.conversion_rates
+    )) {
+      if (
+        currency === "USD" ||
+        currency === "SGD" ||
+        currency === "MYR" ||
+        currency === "IDR" ||
+        currency === "AUD" ||
+        currency === "HKD" ||
+        currency === "THB" ||
+        currency === "JPY" ||
+        currency === "CNY" ||
+        currency === "EUR"
+      ) {
+        let currencyCell = document.createElement("th");
+        currencyCell.textContent = currency;
+
+        let rateCell = document.createElement("td");
+        rateCell.textContent = rate.toFixed(2);
+
+        row1.appendChild(currencyCell);
+        row2.appendChild(rateCell);
+
+        tableBody.appendChild(row1);
+        tableBody.appendChild(row2);
+      }
+    }
+
     });
 
     //ChartJS script for rendering values onto Canvas(Chart) in HTML
@@ -48,45 +91,7 @@ function main() {
     //   },
     // });
 
-    // Add table with "live" exchange rates of selected currencies
-    let resLiveRates = await axios.get(
-      `https://v6.exchangerate-api.com/v6/634528519611d2105366c5aa/latest/${baseCurrency}`
-    );
-
-    console.log(resLiveRates.data.conversion_rates);
-    let tableBody = document.querySelector("#table-body");
-    tableBody.innerHTML = "";
-
-    let row1 = document.createElement("tr");
-    let row2 = document.createElement("tr");
-
-    for (const [currency, rate] of Object.entries(
-      resLiveRates.data.conversion_rates
-    )) {
-      if (
-        currency === "USD" ||
-        currency === "SGD" ||
-        currency === "MYR" ||
-        currency === "IDR" ||
-        currency === "AUD" ||
-        currency === "HKD" ||
-        currency === "THB" ||
-        currency === "JPY"
-      ) {
-        let currencyCell = document.createElement("th");
-        currencyCell.textContent = currency;
-
-        let rateCell = document.createElement("td");
-        rateCell.textContent = rate;
-
-        row1.appendChild(currencyCell);
-        row2.appendChild(rateCell);
-
-        tableBody.appendChild(row1);
-        tableBody.appendChild(row2);
-      }
-    }
-
+    
     // Add marker cluster layer to the map denoting where the money changers are
 
     let resMoneyChangerLocat = await axios.get(
