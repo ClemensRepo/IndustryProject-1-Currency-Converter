@@ -1,0 +1,1 @@
+db.restaurants.find({"cuisine": "hamburger"},{"name":1, "borough":1})

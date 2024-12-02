@@ -17,11 +17,12 @@ body {
 }
 
 #chart {
+    background-color: white;
     height: 50vh;
     width: 100vh;
 }
 
 #map {
-    height: 90vh;
+    height: 50vh;
     width: 90vw;
 }
